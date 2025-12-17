@@ -1,0 +1,150 @@
+trigger: 
+  branches:
+    include:
+    - main
+    - feature/*
+  # paths:
+  #   include:
+  #     - '$(workDir)'
+  
+
+pool: Agent-Hub
+
+variables:
+- group: SecretVariableGroups
+- name: serviceConnection
+  value: paritosh-sc-connection
+
+stages:
+- stage: PreCommitStage
+  displayName: Pre Commit Stage
+  jobs:
+  - job: TerraformInitValidateJob
+    displayName: Terraform Init and Validate Job
+    steps:
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          $exe = "C:\agent\_work\_tool\terraform\1.14.2\x64\terraform.exe"
+              Write-Host "Exists:" (Test-Path $exe)
+              & $exe version
+    - task: TerraformInstaller@1
+      displayName: Terraform Installer
+      inputs:
+        terraformVersion: 'latest'
+    - task: TerraformTask@5
+      displayName: Terraform Init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(workDir)'
+        backendServiceArm: '$(serviceConnection)'
+        backendAzureRmOverrideSubscriptionID: 'e4489957-2c09-442f-936c-3a4283afbde9'
+        backendAzureRmResourceGroupName: 'backend-rg'
+        backendAzureRmStorageAccountName: 'pcslbackendforstg2025'
+        backendAzureRmContainerName: 'backend-terra-container'
+        backendAzureRmKey: 'envdev.terraform.tfstate'
+    
+    - task: TerraformTask@5
+      displayName: Terraform Validate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+        workingDirectory: '$(workDir)'
+    
+  - job: TerraformFmt
+    steps:
+    - task: TerraformTask@5
+      displayName: Terraform Fmt
+      inputs:
+        provider: 'azurerm'
+        command: 'custom'
+        workingDirectory: '$(workDir)'
+        outputTo: 'console'
+        customCommand: 'fmt'
+        environmentServiceNameAzureRM: '$(serviceConnection)'
+        environmentAzureRmOverrideSubscriptionID: 'e4489957-2c09-442f-936c-3a4283afbde9'
+  
+- stage: ScanningAndLinting
+  displayName: Scanning and Linting
+  jobs:
+  - job: TerraformLinting
+    steps:
+    - task: PowerShell@2
+      displayName: Install and Run Tflint
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "==============================="
+                Write-Host " Installing TFLint on Windows "
+                Write-Host "==============================="
+          
+                $tflintVersion = "v0.60.0"
+                $tflintUrl = "https://github.com/terraform-linters/tflint/releases/download/$tflintVersion/tflint_windows_amd64.zip"
+          
+                $installDir = "$env:USERPROFILE\tflint"
+                $zipPath    = "$installDir\tflint.zip"
+          
+                # Create directory
+                if (!(Test-Path $installDir)) {
+                    New-Item -ItemType Directory -Path $installDir | Out-Null
+                }
+          
+                Write-Host "Downloading TFLint..."
+                Invoke-WebRequest -Uri $tflintUrl -OutFile $zipPath
+          
+                Write-Host "Extracting TFLint..."
+                Expand-Archive -Path $zipPath -DestinationPath $installDir -Force
+          
+                # Add to PATH for current pipeline
+                $env:PATH = "$installDir;$env:PATH"
+          
+                Write-Host "Verifying TFLint installation..."
+                tflint --version
+          
+                Write-Host "==============================="
+                Write-Host " Running TFLint "
+                Write-Host "==============================="
+          
+                cd "$(workDir)"
+          
+                tflint --init
+                tflint
+  - job: TerraformSecurityScanning
+    displayName: Tfsec
+    steps:
+    - task: tfsec@1
+      displayName: TfSecScanning
+      inputs:
+        version: 'v1.26.0'
+        dir: '$(workDir)'
+
+- stage: InfraCostAnalysis
+  displayName: Infra Cost Analysis
+  jobs:
+  - job: InfraCostAnalysis
+    displayName: Infra Cost Analysis Job
+    steps:
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "==============================="
+                Write-Host " Initiating Infra Cost Analysis"
+                Write-Host "==============================="
+          
+                # Inject Infracost API Token
+                $env:INFRACOST_API_KEY = "$(apitoken)"
+          
+                # Show which directory is being scanned
+                Write-Host "Scanning path: $($(workDir))"
+          
+                # Verify authentication
+                infracost auth status
+          
+                # Run Infracost
+                infracost breakdown `
+                  --path . `
+                  --format table
+        workingDirectory: '$($(workDir))'
