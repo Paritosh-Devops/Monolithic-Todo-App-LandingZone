@@ -13,7 +13,7 @@ pool: Agent-Hub
 variables:
 - group: SecretVariableGroups
 - name: serviceConnection
-  value: paritosh-sc-connection
+  value: pcsl-serviccon-ind-infra
 
 stages:
 - stage: PreCommitStage
@@ -39,7 +39,7 @@ stages:
         provider: 'azurerm'
         command: 'init'
         workingDirectory: '$(workDir)'
-        backendServiceArm: '$(serviceConnection)'
+        backendServiceArm: 'pcsl-serviccon-ind-infra'
         backendAzureRmOverrideSubscriptionID: 'e4489957-2c09-442f-936c-3a4283afbde9'
         backendAzureRmResourceGroupName: 'backend-rg'
         backendAzureRmStorageAccountName: 'pcslbackendforstg2025'
