@@ -11,7 +11,7 @@ trigger:
 pool: Agent-Hub
 
 variables:
-- group: SecretVariableGroups
+- group: pcslSecretVarGroups
 - name: serviceConnection
   value: pcsl-serviccon-ind-infra
 
@@ -41,10 +41,10 @@ stages:
         workingDirectory: '$(workDir)'
         backendServiceArm: 'pcsl-serviccon-ind-infra'
         backendAzureRmOverrideSubscriptionID: 'e4489957-2c09-442f-936c-3a4283afbde9'
-        backendAzureRmResourceGroupName: 'backend-rg'
-        backendAzureRmStorageAccountName: 'pcslbackendforstg2025'
-        backendAzureRmContainerName: 'backend-terra-container'
-        backendAzureRmKey: 'envdev.terraform.tfstate'
+        backendAzureRmResourceGroupName: ''
+        backendAzureRmStorageAccountName: ''
+        backendAzureRmContainerName: ''
+        backendAzureRmKey: 'dev.terraform.tfstate'
     
     - task: TerraformTask@5
       displayName: Terraform Validate
