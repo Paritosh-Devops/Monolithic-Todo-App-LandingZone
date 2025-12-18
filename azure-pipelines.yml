@@ -142,3 +142,71 @@ stages:
                   --path . `
                   --format table
         workingDirectory: '$($(workDir))'
+
+- stage: PlanAndReview
+  displayName: Plan & Review Stage
+  jobs:
+  - job: PlanAndReviewJob
+    steps:
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(workDir)'
+        backendServiceArm: 'pcsl-serviccon-ind-infra'
+        backendAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
+        backendAzureRmResourceGroupName: 'pcsl-backend-in-rg'
+        backendAzureRmStorageAccountName: 'pcslstgforbkend2025'
+        backendAzureRmContainerName: 'pcsl-backend-container'
+        backendAzureRmKey: 'dev.terraform.tfstate'
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(workDir'
+        environmentServiceNameAzureRM: 'pcsl-serviccon-ind-infra'
+        environmentAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
+
+- stage: ManualValidation
+  displayName: Approval & Governance 
+  jobs:
+  - job: ManualValidation
+    displayName: Manual Validation job
+    pool: server
+    steps:
+    - task: ManualValidation@1
+      displayName: Manual Valiidation task
+      inputs:
+        notifyUsers: 'Paritosh6387@gmail.com'
+        instructions: 'Check the code and approve , Galat approve kiye to Job khatre me ...'
+  
+- stage: DeploymentApplyStage
+  displayName: Terraform Deployment Stage
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+  dependsOn: ManualValidation
+  jobs:
+  - job: TerraformApplyJob
+    
+    displayName: Terraform Apply Job
+    steps:
+    - task: TerraformTask@5
+      displayName: InitBeforeApply
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(workDir)'
+        backendServiceArm: 'pcsl-serviccon-ind-infra'
+        backendAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
+        backendAzureRmResourceGroupName: 'pcsl-backend-in-rg'
+        backendAzureRmStorageAccountName: 'pcslstgforbkend2025'
+        backendAzureRmContainerName: 'pcsl-backend-container'
+        backendAzureRmKey: 'dev.terraform.tfstate'
+    - task: TerraformTask@5
+      displayName: Apply Task
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        workingDirectory: '$(workDir)'
+        commandOptions: '-auto-approve'
+        environmentServiceNameAzureRM: 'pcsl-serviccon-ind-infra'
+        environmentAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
