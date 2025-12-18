@@ -141,7 +141,7 @@ stages:
                 infracost breakdown `
                   --path . `
                   --format table
-        workingDirectory: '$($(workDir))'
+        workingDirectory: '$(workDir)'
 
 - stage: PlanAndReview
   displayName: Plan & Review Stage
