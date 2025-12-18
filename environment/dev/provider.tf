@@ -6,12 +6,12 @@ terraform {
     }
   }
   backend "azurerm" {
-    resource_group_name  = "backend-rg"
-    storage_account_name = "pcslbackendforstg2025"
-    container_name       = "backend-terra-container"
-    key                  = ""
+    resource_group_name  = "pcsl-backend-in-rg"
+    storage_account_name = "pcslstgforbkend2025"
+    container_name       = "pcsl-backend-container"
+    key                  = "dev.terraform.tfstate"
   }
-  required_version = "1.14.2"
+  required_version = "1.14.3"
 }
 
 provider "azurerm" {
