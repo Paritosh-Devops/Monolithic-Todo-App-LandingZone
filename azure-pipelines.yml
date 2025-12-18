@@ -22,13 +22,7 @@ stages:
   - job: TerraformInitValidateJob
     displayName: Terraform Init and Validate Job
     steps:
-    - task: PowerShell@2
-      inputs:
-        targetType: 'inline'
-        script: |
-          $exe = "C:\agent\_work\_tool\terraform\1.14.2\x64\terraform.exe"
-              Write-Host "Exists:" (Test-Path $exe)
-              & $exe version
+
     - task: TerraformInstaller@1
       displayName: Terraform Installer
       inputs:
@@ -40,10 +34,10 @@ stages:
         command: 'init'
         workingDirectory: '$(workDir)'
         backendServiceArm: 'pcsl-serviccon-ind-infra'
-        backendAzureRmOverrideSubscriptionID: 'e4489957-2c09-442f-936c-3a4283afbde9'
-        backendAzureRmResourceGroupName: ''
-        backendAzureRmStorageAccountName: ''
-        backendAzureRmContainerName: ''
+        backendAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
+        backendAzureRmResourceGroupName: 'pcsl-backend-in-rg'
+        backendAzureRmStorageAccountName: 'pcslstgforbkend2025'
+        backendAzureRmContainerName: 'pcsl-backend-container'
         backendAzureRmKey: 'dev.terraform.tfstate'
     
     - task: TerraformTask@5
@@ -64,7 +58,7 @@ stages:
         outputTo: 'console'
         customCommand: 'fmt'
         environmentServiceNameAzureRM: '$(serviceConnection)'
-        environmentAzureRmOverrideSubscriptionID: 'e4489957-2c09-442f-936c-3a4283afbde9'
+        environmentAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
   
 - stage: ScanningAndLinting
   displayName: Scanning and Linting
