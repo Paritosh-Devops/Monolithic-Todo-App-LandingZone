@@ -132,7 +132,7 @@ stages:
                 $env:INFRACOST_API_KEY = "$(apitoken)"
           
                 # Show which directory is being scanned
-                Write-Host "Scanning path: $($(workDir))"
+                Write-Host "Scanning path: $(workDir)"
           
                 # Verify authentication
                 infracost auth status
