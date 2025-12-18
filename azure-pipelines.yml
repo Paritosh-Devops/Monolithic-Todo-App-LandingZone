@@ -160,6 +160,7 @@ stages:
         backendAzureRmContainerName: 'pcsl-backend-container'
         backendAzureRmKey: 'dev.terraform.tfstate'
     - task: TerraformTask@5
+      displayName: Terraform Plan Task
       inputs:
         provider: 'azurerm'
         command: 'plan'
