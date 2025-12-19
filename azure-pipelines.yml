@@ -148,6 +148,10 @@ stages:
   jobs:
   - job: PlanAndReviewJob
     steps:
+    - task: TerraformInstaller@1
+      displayName: TerraformInstaller
+      inputs:
+        terraformVersion: '1.14.3'
     - task: TerraformTask@5
       inputs:
         provider: 'azurerm'
