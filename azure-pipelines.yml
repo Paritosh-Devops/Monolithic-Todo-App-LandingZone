@@ -71,7 +71,22 @@ stages:
         command: 'plan'
         workingDirectory: '$(workDir)'
         environmentServiceNameAzureRM: 'pcsl-serviccon-ind-infra'
-        
+    - task: TerraformTask@5
+      displayName: Terraform Init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(workDir)'
+        backendServiceArm: 'pcsl-serviccon-ind-infra'
+        backendAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
+        backendAzureRmResourceGroupName: 'pcsl-backend-in-rg'
+        backendAzureRmStorageAccountName: 'pcslstgforbkend2025'
+        backendAzureRmContainerName: 'pcsl-backend-container'
+        backendAzureRmKey: 'dev.terraform.tfstate'    
+
+
+
+
 - stage: ScanningAndLinting
   displayName: Scanning and Linting
   jobs:
