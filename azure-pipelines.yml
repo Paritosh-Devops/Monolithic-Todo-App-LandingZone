@@ -64,13 +64,6 @@ stages:
   - job: TerraformPlan
     dependsOn: TerraformInitValidateJob
     steps:
-    
-    - task: TerraformTask@5
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        workingDirectory: '$(workDir)'
-        environmentServiceNameAzureRM: 'pcsl-serviccon-ind-infra'
     - task: TerraformTask@5
       displayName: Terraform Init
       inputs:
@@ -82,7 +75,14 @@ stages:
         backendAzureRmResourceGroupName: 'pcsl-backend-in-rg'
         backendAzureRmStorageAccountName: 'pcslstgforbkend2025'
         backendAzureRmContainerName: 'pcsl-backend-container'
-        backendAzureRmKey: 'dev.terraform.tfstate'    
+        backendAzureRmKey: 'dev.terraform.tfstate'        
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(workDir)'
+        environmentServiceNameAzureRM: 'pcsl-serviccon-ind-infra'
+
 
 
 
