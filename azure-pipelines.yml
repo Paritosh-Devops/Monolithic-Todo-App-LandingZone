@@ -59,7 +59,9 @@ stages:
         customCommand: 'fmt'
         environmentServiceNameAzureRM: '$(serviceConnection)'
         environmentAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
-  - job: Terraform
+  
+  
+  - job: TerraformPlan
     dependsOn: TerraformInitValidateJob
     steps:
     
