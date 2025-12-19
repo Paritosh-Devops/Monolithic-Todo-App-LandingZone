@@ -26,7 +26,7 @@ stages:
     - task: TerraformInstaller@1
       displayName: Terraform Installer
       inputs:
-        terraformVersion: 'latest'
+        terraformVersion: '1.14.3'
     - task: TerraformTask@5
       displayName: Terraform Init
       inputs:
@@ -60,6 +60,33 @@ stages:
         environmentServiceNameAzureRM: '$(serviceConnection)'
         environmentAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
   
+  
+  - job: TerraformPlan
+    dependsOn: TerraformInitValidateJob
+    steps:
+    - task: TerraformTask@5
+      displayName: Terraform Init
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        workingDirectory: '$(workDir)'
+        backendServiceArm: 'pcsl-serviccon-ind-infra'
+        backendAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
+        backendAzureRmResourceGroupName: 'pcsl-backend-in-rg'
+        backendAzureRmStorageAccountName: 'pcslstgforbkend2025'
+        backendAzureRmContainerName: 'pcsl-backend-container'
+        backendAzureRmKey: 'dev.terraform.tfstate'        
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(workDir)'
+        environmentServiceNameAzureRM: 'pcsl-serviccon-ind-infra'
+
+
+
+
+
 - stage: ScanningAndLinting
   displayName: Scanning and Linting
   jobs:
@@ -132,7 +159,7 @@ stages:
                 $env:INFRACOST_API_KEY = "$(apitoken)"
           
                 # Show which directory is being scanned
-                Write-Host "Scanning path: $($(workDir))"
+                Write-Host "Scanning path: $(workDir)"
           
                 # Verify authentication
                 infracost auth status
@@ -141,13 +168,17 @@ stages:
                 infracost breakdown `
                   --path . `
                   --format table
-        workingDirectory: '$($(workDir))'
+        workingDirectory: '$(workDir)'
 
 - stage: PlanAndReview
   displayName: Plan & Review Stage
   jobs:
   - job: PlanAndReviewJob
     steps:
+    - task: TerraformInstaller@1
+      displayName: TerraformInstaller
+      inputs:
+        terraformVersion: '1.14.3'
     - task: TerraformTask@5
       inputs:
         provider: 'azurerm'
@@ -164,7 +195,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        workingDirectory: '$(workDir'
+        workingDirectory: '$(workDir)'
         environmentServiceNameAzureRM: 'pcsl-serviccon-ind-infra'
         environmentAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
 
