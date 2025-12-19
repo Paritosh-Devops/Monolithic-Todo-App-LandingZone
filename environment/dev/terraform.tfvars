@@ -159,7 +159,7 @@ virtual_machines = {
       }
     }
     vm_name        = "vm-pcsl-frontend01"
-    size           = "Standard_B2s"
+    size           = "Standard_B1s"
   secret_name_un = "username"
     sec_name_pw = "password"
     kv_name = "todokeyvault99"
@@ -193,7 +193,7 @@ virtual_machines = {
       }
     }
     vm_name        = "vm-pcsl-backend01"
-    size           = "Standard_B2s"
+    size           = "Standard_B1s"
   secret_name_un = "username"
     sec_name_pw = "password"
     kv_name = "todokeyvault99"
