@@ -23,18 +23,7 @@ resource_groups = {
       costcenter  = "delhi006"
     }
   }
-  rg03 = {
-    name       = "dev-micro-pcsl-rg-03"
-    location   = "eastus"
-    managed_by = "terraform"
-    tags = {
-      environment = "dev"
-      owner       = "ParitoshPany"
-      costcenter  = "delhi006"
-    }
-  }
 }
-
 #Define your virtual networks & subnets below
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
@@ -82,14 +71,14 @@ aks-cluster = {
 
   aks1 = {
     name                = "myaksclustwa990"
-    location            = "eastus"
-    resource_group_name = "dev-micro-pcsl-rg-03"
+    location            = "centralindia"
+    resource_group_name = "dev-micro-pcsl-rg-02"
     dns_prefix          = "myaks1"
     default_node_pool = [
       {
         name       = "default"
         node_count = 1
-        vm_size    = "standard_b16as_v2"
+        vm_size    = "standard_a2_v2"
       }
     ]
     identity = [{
