@@ -59,7 +59,13 @@ stages:
         customCommand: 'fmt'
         environmentServiceNameAzureRM: '$(serviceConnection)'
         environmentAzureRmOverrideSubscriptionID: 'e5c8e042-8d4d-4e69-8511-a29fb378ec23'
-  
+    - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        workingDirectory: '$(workDir)'
+        environmentServiceNameAzureRM: 'pcsl-serviccon-ind-infra'
+        
 - stage: ScanningAndLinting
   displayName: Scanning and Linting
   jobs:
