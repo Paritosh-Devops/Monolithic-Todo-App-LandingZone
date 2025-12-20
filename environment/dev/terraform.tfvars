@@ -78,7 +78,7 @@ aks-cluster = {
       {
         name       = "default"
         node_count = 1
-        vm_size    = "standard_a2_v2"
+        vm_size    = "standard_b2s_v2"
       }
     ]
     identity = [{
@@ -148,10 +148,10 @@ virtual_machines = {
       }
     }
     vm_name        = "vm-pcsl-frontend01"
-    size           = "Standard_B1s"
+    size           = "Standard_B2s"
   secret_name_un = "username"
     sec_name_pw = "password"
-    kv_name = "todokeyvault99"
+    kv_name = "todokeyvault33"
     os_disk = {
       caching              = "ReadWrite"
       storage_account_type = "Standard_LRS"
@@ -182,10 +182,10 @@ virtual_machines = {
       }
     }
     vm_name        = "vm-pcsl-backend01"
-    size           = "Standard_B1s"
+    size           = "Standard_B2s"
   secret_name_un = "username"
     sec_name_pw = "password"
-    kv_name = "todokeyvault99"
+    kv_name = "todokeyvault33"
     os_disk = {
       caching              = "ReadWrite"
       storage_account_type = "Standard_LRS"
@@ -204,7 +204,7 @@ virtual_machines = {
 #----------------------------------------------------------------------
 keyvaults = {
   keyvault1 = {
-    name                        = "todokeyvault99"
+    name                        = "todokeyvault33"
     location                    = "centralindia"
     resource_group_name         = "dev-mono-pcsl-rg-01"
     enabled_for_disk_encryption = true
@@ -285,7 +285,7 @@ sqldbs = {
 
 acrs = {
   acr1 = {
-    name                = "pcslacrregistry99"
+    name                = "pcslacrregistry91"
     resource_group_name = "dev-mono-pcsl-rg-01"
     location            = "centralindia"
     sku                 = "Standard"
@@ -309,14 +309,14 @@ acrs = {
 
 secrets = {
   vmsecret01 = {
-    kv_name = "todokeyvault99"
+    kv_name = "todokeyvault33"
     resource_group_name = "dev-mono-pcsl-rg-01"
     secret_name = "username"
     secret_value = "adminuser"
   }
 
     vmsecret02 = {
-    kv_name = "todokeyvault99"
+    kv_name = "todokeyvault33"
     resource_group_name = "dev-mono-pcsl-rg-01"
     secret_name = "password"
     secret_value = "Hanuman@2025"
